@@ -173,9 +173,6 @@ YogaxD-Smtp/
 - Secara teratur ganti app password Anda
 - Pantau akun Gmail Anda untuk aktivitas mencurigakan
 
-## Next Update
-- Fix Bug (isi email kosong).
-
 ## Kontribusi
 
 Jangan ragu untuk mengirimkan masalah dan permintaan peningkatan!
