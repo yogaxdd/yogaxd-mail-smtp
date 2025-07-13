@@ -21,8 +21,8 @@ Aplikasi web sederhana berbasis Flask untuk melihat inbox Gmail. Aplikasi ini me
 
 1. **Clone atau download repository ini**
    ```bash
-   git clone <repository-url>
-   cd YogaxD-Smtp
+   git clone https://github.com/yogaxdd/yogaxd-mail-smtp
+   cd yogaxd-mail-smtp
    ```
 
 2. **Install dependensi yang diperlukan**
