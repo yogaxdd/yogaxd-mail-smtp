@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Inbox - {{ email_id }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #f6f8fa;
+      --fg: #000;
+      --card-bg: #fff;
+      --primary: #007bff;
+      --hover: #f6faff;
+      --modal-bg: rgba(0, 0, 0, 0.25);
+    }
+
+    body.dark {
+      --bg: #121212;
+      --fg: #eee;
+      --card-bg: #1e1e1e;
+      --primary: #4dabf7;
+      --hover: #1b1b1b;
+      --modal-bg: rgba(0, 0, 0, 0.6);
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      padding: 2rem 1.5rem;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      line-height: 1.4;
+      margin: 0;
+      word-break: break-word;
+    }
+
+    .email-wrap {
+      font-weight: 400;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      display: block;
+      font-size: 1rem;
+      color: var(--fg);
+    }
+
+    .refresh-btn, .theme-toggle {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .refresh-btn:hover, .theme-toggle:hover {
+      background: #0056b3;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: var(--fg);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      display: inline-block;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+    }
+
+    .email-card {
+      background: var(--hover);
+      padding: 1rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      cursor: pointer;
+    }
+
+    .email-card b {
+      color: var(--fg);
+    }
+
+    .empty {
+      color: #888;
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background: var(--modal-bg);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      color: var(--fg);
+      border-radius: 12px;
+      max-width: 600px;
+      width: 95vw;
+      padding: 2rem 1.5rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      position: relative;
+      animation: fadeIn 0.2s;
+    }
+
+    @keyframes fadeIn {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .close {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      font-size: 1.5rem;
+      color: #888;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .close:hover {
+      color: var(--primary);
+    }
+
+    .modal-subject {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .modal-meta {
+      color: #6c757d;
+      font-size: 0.97em;
+      margin-bottom: 1rem;
+    }
+
+    .modal-body {
+      font-size: 1.05em;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-bottom: 0.5rem;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 1rem;
+        padding: 1.5rem 1rem;
+      }
+      h1 {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <h1>
+        📥 Inbox:
+        <div class="email-wrap">{{ email_id }}</div>
+      </h1>
+      <div style="display:flex; gap: 0.5rem;">
+        <button class="refresh-btn" onclick="refreshInbox()">🔄 Refresh</button>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓 Dark Mode</button>
+      </div>
+    </div>
+
+    <a href="/" class="back-link">⬅ Kembali</a>
+
+    {% if emails %}
+      {% for email in emails %}
+        <div class="email-card" onclick="openModal({{ loop.index0 }})">
+          <div><b>📌 Subject:</b> {{ email.subject or '(No Subject)' }}</div>
+          <div><b>🙋 Dari:</b> {{ email.from }}</div>
+          <div><b>🕒 Tanggal:</b> {{ email.date }}</div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty">Inbox kosong atau gagal fetch email.</div>
+    {% endif %}
+  </div>
+
+  <div class="modal" id="emailModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div class="modal-subject" id="modalSubject"></div>
+      <div class="modal-meta" id="modalMeta"></div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const emails = {{ emails|tojson|safe }};
+
+    function refreshInbox() {
+      window.location.reload();
+    }
+
+    function openModal(idx) {
+      const modal = document.getElementById('emailModal');
+      document.getElementById('modalSubject').textContent = emails[idx].subject || '(No Subject)';
+      document.getElementById('modalMeta').textContent = 'Dari: ' + (emails[idx].from || '') + ' | Tanggal: ' + (emails[idx].date || '');
+      document.getElementById('modalBody').textContent = emails[idx].body || '(Kosong)';
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('emailModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('emailModal');
+      if (event.target === modal) closeModal();
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    window.onload = function() {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark');
+      }
+    }
+  </script>
+</body>
+</html>
