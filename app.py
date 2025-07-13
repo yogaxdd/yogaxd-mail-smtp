@@ -42,13 +42,24 @@ def fetch_emails(account):
 
             body = ""
             if msg.is_multipart():
+                # Cari text/plain dulu
                 for part in msg.walk():
                     ctype = part.get_content_type()
                     if ctype == 'text/plain' and part.get_content_disposition() is None:
                         body = part.get_payload(decode=True).decode('utf-8', errors='ignore')
                         break
+                # Jika text/plain tidak ada, cari text/html
+                if not body:
+                    for part in msg.walk():
+                        ctype = part.get_content_type()
+                        if ctype == 'text/html' and part.get_content_disposition() is None:
+                            body = part.get_payload(decode=True).decode('utf-8', errors='ignore')
+                            break
             else:
-                body = msg.get_payload(decode=True).decode('utf-8', errors='ignore')
+                # Non-multipart: bisa text/plain atau text/html
+                ctype = msg.get_content_type()
+                if ctype == 'text/plain' or ctype == 'text/html':
+                    body = msg.get_payload(decode=True).decode('utf-8', errors='ignore')
 
             emails.append({"subject": subject, "from": from_, "date": date_, "body": body})
 
